@@ -16,9 +16,6 @@ username = raw_input("username: ")
 auth_token = raw_input("auth token: ")
 channel_id = raw_input("channel id: ")
 
-print "getting 100 (maximum) recent messages in channel id " + channel_id
-messages = json.loads(requests.get("http://canary.discordapp.com/api/v6/channels/" + channel_id + "/messages", headers={"authorization": auth_token}, params={"limit": 100}).content)
-
 def get_all_messages(auth, id, last="", prev=[]): # recursively find all messages in a channel, 100 at a time
     if not last: # first method call, start from beginning (might be able to remove)
         messages = json.loads(requests.get("http://canary.discordapp.com/api/v6/channels/" + id + "/messages", headers={"authorization": auth}, params={"limit": 100}).content)
@@ -41,6 +38,4 @@ def delete_all(auth, id, user, messages):
             requests.delete("http://canary.discordapp.com/api/v6/channels/" + id + "/messages/" + message["id"], headers={"authorization": auth})
     print "all messages deleted"
 
-allmsgs = get_all_messages(auth_token, channel_id)
-print len(allmsgs)
-delete_all(auth_token, channel_id, username, allmsgs)
+delete_all(auth_token, channel_id, username, get_all_messages(auth_token, channel_id))
