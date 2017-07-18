@@ -1,4 +1,4 @@
-import json, requests
+import json, requests, time
 
 print """
  /' \  /' \\
@@ -12,9 +12,9 @@ print """
 print "--- 11's discord deleter thing ---"
 print "clears all of your messages in a channel"
 print "in order for this script to work properly the channel id, auth token, and username is required"
-username = raw_input("username: ")
-auth_token = raw_input("auth token: ")
-channel_id = raw_input("channel id: ")
+username = raw_input("username:")
+auth_token = raw_input("auth token:")
+channel_id = raw_input("channel id:")
 delete_from_all_users = True if raw_input("delete messages from other users (y/n): ") == "y" else False
 
 def get_all_messages(auth, id, last="", prev=[]): # recursively find all messages in a channel, 100 at a time
@@ -35,9 +35,12 @@ def get_all_messages(auth, id, last="", prev=[]): # recursively find all message
 def delete_all(auth, id, user, messages):
     print "deleting all messages in " + id + " from username " + user
     for message in messages:
+        time.sleep(0.3) 
         if delete_from_all_users:
-            requests.delete("http://canary.discordapp.com/api/v6/channels/" + id + "/messages/" + message["id"], headers={"authorization": auth})
+            print "message "+ message["id"] + " deleting..."
+            print requests.delete("http://canary.discordapp.com/api/v6/channels/" + id + "/messages/" + message["id"], headers={"authorization": auth})
         else:
+            print "message "+ message["id"] + " deleting..."
             if (message["author"]["username"] == user):
                 requests.delete("http://canary.discordapp.com/api/v6/channels/" + id + "/messages/" + message["id"],
                                 headers={"authorization": auth})
